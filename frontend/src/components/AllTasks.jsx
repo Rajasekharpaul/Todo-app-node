@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import TaskCard from './TaskCard'
 
-const AllTasks = () => {
+const AllTasks = ({ refresh }) => {
     const [task, settask] = useState([]);
     const [error, seterror] = useState('');
     const [success, setsuccess] = useState(false);
@@ -19,17 +19,27 @@ const AllTasks = () => {
     };
     useEffect(() => {
         fetchTasks();
-    }, []);
+    }, [refresh]);
+    const handleDelete = (id) => {
+        settask(task.filter(t => t._id !== id));
+    };
+    const handleEdit = () => {
+        fetchTasks();
+    };
     return (
         <div className="all-tasks">
             <h1>All Tasks</h1>
             {task?.length == 0
                 ? (<div className="no-tasks">No tasks available</div>)
                 : task.map((tasks) => (
-                    <TaskCard task={tasks} />
+                    <TaskCard key={tasks._id} task={{
+                        id: tasks._id,
+                        title: tasks.title,
+                        description: tasks.description,
+                        completed: tasks.completed
+                    }} onDelete={handleDelete} onEdit={handleEdit} />
                 ))}
             {error && <div className="error-message">{error}</div>}
-            {success && <div className="success-message">Tasks fetched successfully!</div>}
         </div>
     )
 }

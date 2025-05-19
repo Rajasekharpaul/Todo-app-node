@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import axios from 'axios';
 
-const TaskManager = () => {
+const TaskManager = ({ onTaskAdded }) => {
     const [tasks, settasks] = useState({ title: "", description: "", completed: false });
     const [error, seterror] = useState('');
     const [success, setsuccess] = useState(false);
@@ -14,6 +14,7 @@ const TaskManager = () => {
             await axios.post("http://localhost:5000/api/todo", tasks);
             seterror('');
             setsuccess(true);
+            if (onTaskAdded) onTaskAdded();
         } catch (err) {
             const message = err.response?.data?.message || 'Something went wrong';
             seterror(message);
